@@ -8,49 +8,49 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Space/Quantum theme - Deep space background */
-    --background: 230 35% 7%;
-    --foreground: 180 100% 90%;
+    /* Modern gradient theme */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 230 30% 12%;
-    --card-foreground: 180 100% 90%;
+    --card: 240 10% 8%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 230 30% 12%;
-    --popover-foreground: 180 100% 90%;
+    --popover: 240 10% 8%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Neon cyan primary */
-    --primary: 180 100% 50%;
-    --primary-foreground: 230 35% 7%;
+    /* Vibrant purple-blue gradient primary */
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Electric purple secondary */
-    --secondary: 280 80% 60%;
-    --secondary-foreground: 180 100% 90%;
+    /* Teal secondary */
+    --secondary: 173 80% 40%;
+    --secondary-foreground: 0 0% 100%;
 
-    /* Muted space tones */
-    --muted: 230 25% 20%;
-    --muted-foreground: 180 50% 70%;
+    /* Muted tones */
+    --muted: 240 5% 26%;
+    --muted-foreground: 240 5% 65%;
 
-    /* Bright cyan accent */
-    --accent: 180 100% 60%;
-    --accent-foreground: 230 35% 7%;
+    /* Pink accent */
+    --accent: 330 81% 60%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 80% 60%;
-    --destructive-foreground: 180 100% 90%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 230 30% 25%;
-    --input: 230 30% 20%;
-    --ring: 180 100% 50%;
+    --border: 240 6% 18%;
+    --input: 240 6% 18%;
+    --ring: 262 83% 58%;
 
-    --radius: 1rem;
+    --radius: 0.75rem;
 
-    /* Quantum glow effects */
-    --quantum-glow: 180 100% 50%;
-    --quantum-glow-secondary: 280 80% 60%;
+    /* Quantum glow effects - updated for modern theme */
+    --quantum-glow: 262 83% 58%;
+    --quantum-glow-secondary: 173 80% 40%;
     
     /* Particle states */
-    --spin-up: 180 100% 50%;
-    --spin-down: 280 80% 60%;
-    --neutral: 200 60% 50%;
+    --spin-up: 262 83% 58%;
+    --spin-down: 173 80% 40%;
+    --neutral: 240 5% 50%;
   }
 }
 
@@ -61,7 +61,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(230 40% 5%) 50%, hsl(250 45% 8%) 100%);
+    background: radial-gradient(ellipse at top, hsl(262 83% 10%) 0%, hsl(240 10% 3.9%) 50%, hsl(240 10% 1%) 100%);
     background-attachment: fixed;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
