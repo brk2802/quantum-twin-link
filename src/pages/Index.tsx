@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import QuantumParticle from "@/components/QuantumParticle";
 import EntanglementLink from "@/components/EntanglementLink";
 import { Button } from "@/components/ui/button";
-import { Sparkles, RotateCcw, Maximize2, Zap, LogOut, BookOpen, Atom } from "lucide-react";
+import { Sparkles, RotateCcw, Maximize2, Zap, LogOut, BookOpen, Atom, Brain } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -172,6 +172,15 @@ const Index = () => {
               >
                 <BookOpen className="w-4 h-4 mr-2" />
                 Learn
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => navigate("/game")}
+                className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
+              >
+                <Brain className="w-4 h-4 mr-2" />
+                Play Game
               </Button>
               <Button
                 variant="ghost"
