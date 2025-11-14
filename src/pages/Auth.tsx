@@ -43,28 +43,11 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      // Look up student by name to get their email
-      const { data: students, error: lookupError } = await supabase
-        .from("students")
-        .select("*")
-        .eq("name", name)
-        .limit(1);
-
-      if (lookupError) throw lookupError;
-
-      if (!students || students.length === 0) {
-        toast.error("Student not found. Please check your name.");
-        setLoading(false);
-        return;
-      }
-
-      const student = students[0];
-      
-      // Create email from registration number if user doesn't exist
+      // Create email from registration number
       const email = `${registrationNo}@students.local`;
 
       // Try to sign in
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password: registrationNo,
       });
@@ -86,22 +69,28 @@ const Auth = () => {
           });
 
           if (signInError2) throw signInError2;
-
-          toast.success("Account created and logged in!");
         } else {
           throw signInError;
         }
-      } else {
-        toast.success("Logged in successfully!");
       }
 
-      // Update student record with user_id if not set
-      if (signInData?.user && !student.user_id) {
-        await supabase
-          .from("students")
-          .update({ user_id: signInData.user.id })
-          .eq("id", student.id);
+      // Now verify and claim the student record
+      const { data: isValid, error: verifyError } = await supabase.rpc(
+        'verify_and_claim_student',
+        { p_name: name, p_registration_no: registrationNo }
+      );
+
+      if (verifyError) throw verifyError;
+
+      if (!isValid) {
+        // Sign out if verification failed
+        await supabase.auth.signOut();
+        toast.error("Student not found. Please check your name and registration number.");
+        setLoading(false);
+        return;
       }
+
+      toast.success("Logged in successfully!");
 
     } catch (error: any) {
       console.error("Login error:", error);
