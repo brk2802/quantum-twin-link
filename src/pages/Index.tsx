@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import QuantumParticle from "@/components/QuantumParticle";
 import EntanglementLink from "@/components/EntanglementLink";
-import WarpTransition from "@/components/WarpTransition";
 import BellsTheoremDemo from "@/components/BellsTheoremDemo";
 import SuperpositionDemo from "@/components/SuperpositionDemo";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,6 @@ const Index = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [showIntro, setShowIntro] = useState(true);
-  const [showWarp, setShowWarp] = useState(false);
   const [aliceState, setAliceState] = useState<QuantumState>("neutral");
   const [bobState, setBobState] = useState<QuantumState>("neutral");
   const [separated, setSeparated] = useState(false);
@@ -30,14 +28,10 @@ const Index = () => {
         navigate("/auth");
       } else {
         setLoading(false);
-        // Show warp transition, then intro
-        setTimeout(() => setShowWarp(true), 100);
-        setTimeout(() => {
-          setShowWarp(false);
-          setShowIntro(true);
-        }, 1300);
+        // Show intro animation
+        setTimeout(() => setShowIntro(true), 100);
         // Hide intro after animations
-        setTimeout(() => setShowIntro(false), 4500);
+        setTimeout(() => setShowIntro(false), 3500);
       }
     });
 
