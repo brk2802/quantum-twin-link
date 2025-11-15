@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import QuantumParticle from "@/components/QuantumParticle";
 import EntanglementLink from "@/components/EntanglementLink";
+import WarpTransition from "@/components/WarpTransition";
+import BellsTheoremDemo from "@/components/BellsTheoremDemo";
+import SuperpositionDemo from "@/components/SuperpositionDemo";
 import { Button } from "@/components/ui/button";
-import { Sparkles, RotateCcw, Maximize2, Zap, LogOut, BookOpen, Atom, Brain } from "lucide-react";
+import { Sparkles, RotateCcw, Maximize2, Zap, LogOut, BookOpen, Atom, Brain, Binary, Orbit } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -14,6 +17,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [showIntro, setShowIntro] = useState(true);
+  const [showWarp, setShowWarp] = useState(false);
   const [aliceState, setAliceState] = useState<QuantumState>("neutral");
   const [bobState, setBobState] = useState<QuantumState>("neutral");
   const [separated, setSeparated] = useState(false);
@@ -26,8 +30,14 @@ const Index = () => {
         navigate("/auth");
       } else {
         setLoading(false);
-        // Hide intro after 3 seconds
-        setTimeout(() => setShowIntro(false), 3000);
+        // Show warp transition, then intro
+        setTimeout(() => setShowWarp(true), 100);
+        setTimeout(() => {
+          setShowWarp(false);
+          setShowIntro(true);
+        }, 1300);
+        // Hide intro after animations
+        setTimeout(() => setShowIntro(false), 4500);
       }
     });
 
@@ -388,6 +398,143 @@ const Index = () => {
             </motion.div>
           </div>
         </section>
+
+        {/* Bell's Theorem Section */}
+        <section className="py-20 px-4 bg-card/20">
+          <div className="container mx-auto max-w-6xl">
+            <BellsTheoremDemo />
+          </div>
+        </section>
+
+        {/* Superposition Section */}
+        <section className="py-20 px-4">
+          <div className="container mx-auto max-w-6xl">
+            <SuperpositionDemo />
+          </div>
+        </section>
+
+        {/* Additional Educational Content */}
+        <section className="py-20 px-4 bg-card/20">
+          <div className="container mx-auto max-w-6xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-center mb-16"
+            >
+              <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Quantum Mechanics Fundamentals
+              </h2>
+            </motion.div>
+
+            <div className="grid md:grid-cols-3 gap-6">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="p-8 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 backdrop-blur"
+              >
+                <Binary className="w-12 h-12 text-primary mb-4" />
+                <h3 className="text-2xl font-bold mb-3 text-primary">Quantum States</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Unlike classical bits that are either 0 or 1, quantum bits (qubits) can exist in a 
+                  superposition of both states simultaneously until measured. This is the foundation of 
+                  quantum computing's power.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="p-8 rounded-xl bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/20 backdrop-blur"
+              >
+                <Brain className="w-12 h-12 text-secondary mb-4" />
+                <h3 className="text-2xl font-bold mb-3 text-secondary">Wave-Particle Duality</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Quantum entities exhibit both wave-like and particle-like properties. They exist as 
+                  probability waves until observed, when they collapse into definite particles. This 
+                  duality is fundamental to quantum behavior.
+                </p>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.3 }}
+                className="p-8 rounded-xl bg-gradient-to-br from-accent/10 to-accent/5 border border-accent/20 backdrop-blur"
+              >
+                <Orbit className="w-12 h-12 text-accent mb-4" />
+                <h3 className="text-2xl font-bold mb-3 text-accent">Uncertainty Principle</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  Heisenberg's uncertainty principle states we cannot simultaneously know both the exact 
+                  position and momentum of a particle. The more precisely we measure one, the less we 
+                  know about the other.
+                </p>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mt-12 p-8 rounded-xl bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border border-primary/20"
+            >
+              <h3 className="text-3xl font-bold mb-4 text-center bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                The Quantum Revolution
+              </h3>
+              <div className="grid md:grid-cols-2 gap-6 text-muted-foreground">
+                <div>
+                  <h4 className="text-xl font-semibold text-primary mb-3">Quantum Computing</h4>
+                  <p className="leading-relaxed">
+                    Quantum computers harness superposition and entanglement to perform calculations 
+                    exponentially faster than classical computers for specific problems like cryptography, 
+                    drug discovery, and optimization.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold text-secondary mb-3">Quantum Cryptography</h4>
+                  <p className="leading-relaxed">
+                    Quantum key distribution uses entangled particles to create unbreakable encryption. 
+                    Any attempt to intercept the key disturbs the quantum state, immediately alerting 
+                    both parties to the breach.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold text-accent mb-3">Quantum Teleportation</h4>
+                  <p className="leading-relaxed">
+                    Using entanglement, the exact state of a quantum particle can be transferred to 
+                    another particle at a distant location, enabling future quantum networks and 
+                    quantum internet.
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-xl font-semibold text-primary mb-3">Quantum Sensing</h4>
+                  <p className="leading-relaxed">
+                    Quantum sensors exploit quantum phenomena to achieve unprecedented precision in 
+                    measuring magnetic fields, gravity, time, and other physical quantities—revolutionizing 
+                    navigation, medical imaging, and fundamental research.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="py-12 px-4 border-t border-border/50">
+          <div className="container mx-auto max-w-4xl text-center">
+            <p className="text-muted-foreground">
+              Built to explore the fascinating world of quantum entanglement
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              © 2025 Quantum Learning Platform
+            </p>
+          </div>
+        </footer>
       </div>
     </>
   );
