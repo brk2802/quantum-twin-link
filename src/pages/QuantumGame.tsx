@@ -91,6 +91,11 @@ const QuantumGame = () => {
   const [isEntangled, setIsEntangled] = useState(false);
   const [separated, setSeparated] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [bestStreak, setBestStreak] = useState(0);
+  const [multiplier, setMultiplier] = useState(1);
+  const [showCombo, setShowCombo] = useState(false);
+  const [particles, setParticles] = useState<Array<{id: number, x: number, y: number}>>([]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -135,12 +140,39 @@ const QuantumGame = () => {
     setTotalAttempts(prev => prev + 1);
     
     if (correct) {
-      setScore(prev => prev + 10);
-      toast.success("Correct! +10 points", {
+      const newStreak = streak + 1;
+      setStreak(newStreak);
+      if (newStreak > bestStreak) setBestStreak(newStreak);
+      
+      // Calculate multiplier based on streak
+      const newMultiplier = Math.min(Math.floor(newStreak / 3) + 1, 5);
+      setMultiplier(newMultiplier);
+      
+      const points = 10 * newMultiplier;
+      setScore(prev => prev + points);
+      
+      // Show combo animation for streaks
+      if (newStreak >= 3) {
+        setShowCombo(true);
+        setTimeout(() => setShowCombo(false), 2000);
+      }
+      
+      // Create particle explosion
+      const newParticles = Array.from({ length: 12 }, (_, i) => ({
+        id: Date.now() + i,
+        x: Math.random() * 100 - 50,
+        y: Math.random() * 100 - 50
+      }));
+      setParticles(newParticles);
+      setTimeout(() => setParticles([]), 1000);
+      
+      toast.success(newStreak >= 3 ? `${newStreak}x COMBO! +${points} points 🔥` : `Correct! +${points} points`, {
         icon: <CheckCircle2 className="w-4 h-4" />
       });
     } else {
-      toast.error("Incorrect! Study the explanation", {
+      setStreak(0);
+      setMultiplier(1);
+      toast.error("Streak broken! Study the explanation", {
         icon: <XCircle className="w-4 h-4" />
       });
     }
@@ -285,17 +317,67 @@ const QuantumGame = () => {
             </div>
           </div>
           
-          <div className="flex gap-4">
-            <Card className="border-primary/20">
-              <CardContent className="pt-4 text-center">
+          <div className="flex gap-4 relative">
+            <Card className="border-primary/20 relative overflow-hidden">
+              <CardContent className="pt-4 text-center min-w-[100px]">
                 <Trophy className="w-6 h-6 mx-auto mb-1 text-primary" />
-                <div className="text-2xl font-bold text-primary">{score}</div>
+                <motion.div 
+                  key={score}
+                  initial={{ scale: 1.5, color: "hsl(var(--primary))" }}
+                  animate={{ scale: 1 }}
+                  className="text-2xl font-bold text-primary"
+                >
+                  {score}
+                </motion.div>
                 <div className="text-xs text-muted-foreground">Score</div>
               </CardContent>
+              
+              {/* Particle Explosion Effect */}
+              <AnimatePresence>
+                {particles.map(particle => (
+                  <motion.div
+                    key={particle.id}
+                    initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
+                    animate={{ 
+                      x: particle.x, 
+                      y: particle.y, 
+                      scale: 0,
+                      opacity: 0 
+                    }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="absolute top-1/2 left-1/2 w-2 h-2 bg-primary rounded-full"
+                    style={{ 
+                      boxShadow: "0 0 10px hsl(var(--primary))",
+                    }}
+                  />
+                ))}
+              </AnimatePresence>
             </Card>
+            
+            <Card className="border-accent/20">
+              <CardContent className="pt-4 text-center min-w-[100px]">
+                <Zap className="w-6 h-6 mx-auto mb-1 text-accent" />
+                <motion.div 
+                  key={streak}
+                  initial={{ scale: 1.3 }}
+                  animate={{ scale: 1 }}
+                  className="text-2xl font-bold text-accent"
+                >
+                  {streak}x
+                </motion.div>
+                <div className="text-xs text-muted-foreground">Streak</div>
+                {multiplier > 1 && (
+                  <Badge className="mt-1 bg-accent/20 text-accent border-0 text-[10px]">
+                    {multiplier}x Multi
+                  </Badge>
+                )}
+              </CardContent>
+            </Card>
+            
             <Card className="border-secondary/20">
-              <CardContent className="pt-4 text-center">
-                <Zap className="w-6 h-6 mx-auto mb-1 text-secondary" />
+              <CardContent className="pt-4 text-center min-w-[100px]">
+                <Target className="w-6 h-6 mx-auto mb-1 text-secondary" />
                 <div className="text-2xl font-bold text-secondary">
                   {totalAttempts > 0 ? Math.round((score / (totalAttempts * 10)) * 100) : 0}%
                 </div>
@@ -304,14 +386,56 @@ const QuantumGame = () => {
             </Card>
           </div>
         </div>
+        
+        {/* Combo Display */}
+        <AnimatePresence>
+          {showCombo && (
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              exit={{ scale: 0, rotate: 180, opacity: 0 }}
+              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none"
+            >
+              <div className="relative">
+                <div className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+                  {streak}x COMBO!
+                </div>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="absolute inset-0 border-4 border-primary rounded-full blur-md -z-10"
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Progress Bar */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>Level Progress</span>
-            <span>{Math.round(levelProgress)}%</span>
+        <div className="space-y-3">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="font-medium">Level Progress</span>
+              <span className="text-primary font-bold">{Math.round(levelProgress)}%</span>
+            </div>
+            <Progress value={levelProgress} className="h-3 bg-secondary/20" />
           </div>
-          <Progress value={levelProgress} className="h-2" />
+          
+          {/* Streak Progress to Next Multiplier */}
+          {streak > 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="space-y-2"
+            >
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Next Multiplier Bonus</span>
+                <span className="text-accent font-semibold">
+                  {3 - (streak % 3)} more correct!
+                </span>
+              </div>
+              <Progress value={(streak % 3) * 33.33} className="h-2 bg-accent/20" />
+            </motion.div>
+          )}
         </div>
 
         {/* Challenge Question */}
@@ -367,28 +491,38 @@ const QuantumGame = () => {
             animate={{ opacity: 1, y: 0 }}
             className="grid sm:grid-cols-2 gap-4"
           >
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => handleAnswer("opposite")}
-              className="h-auto py-6 flex-col gap-2"
+            <motion.div
+              whileHover={{ scale: 1.03, y: -4 }}
+              whileTap={{ scale: 0.97 }}
             >
-              <span className="text-lg font-bold">Opposite Spins</span>
-              <span className="text-sm text-muted-foreground">
-                They will have opposite measurements
-              </span>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              onClick={() => handleAnswer("same")}
-              className="h-auto py-6 flex-col gap-2"
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => handleAnswer("opposite")}
+                className="w-full h-auto py-6 flex-col gap-2 border-2 hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)] transition-all duration-300"
+              >
+                <span className="text-lg font-bold">Opposite Spins ⚡</span>
+                <span className="text-sm text-muted-foreground">
+                  They will have opposite measurements
+                </span>
+              </Button>
+            </motion.div>
+            <motion.div
+              whileHover={{ scale: 1.03, y: -4 }}
+              whileTap={{ scale: 0.97 }}
             >
-              <span className="text-lg font-bold">Same Spins</span>
-              <span className="text-sm text-muted-foreground">
-                They will have identical measurements
-              </span>
-            </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => handleAnswer("same")}
+                className="w-full h-auto py-6 flex-col gap-2 border-2 hover:border-secondary hover:bg-secondary/10 hover:shadow-[0_0_20px_hsl(var(--secondary)/0.3)] transition-all duration-300"
+              >
+                <span className="text-lg font-bold">Same Spins 🔄</span>
+                <span className="text-sm text-muted-foreground">
+                  They will have identical measurements
+                </span>
+              </Button>
+            </motion.div>
           </motion.div>
         )}
 
