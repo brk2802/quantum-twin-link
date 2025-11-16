@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,14 +8,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Sparkles } from "lucide-react";
-import WarpTransition from "@/components/WarpTransition";
+
 
 const Auth = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [name, setName] = useState("");
   const [registrationNo, setRegistrationNo] = useState("");
-  const [showWarp, setShowWarp] = useState(false);
+  
 
   useEffect(() => {
     // Check if user is already logged in
@@ -94,12 +94,10 @@ const Auth = () => {
 
       toast.success("Logged in successfully!");
       
-      // Trigger warp transition before navigation
-      setShowWarp(true);
-      setTimeout(() => {
-        navigate("/");
-      }, 1200); // Delay navigation for warp animation
-      return; // Exit early to prevent setting loading to false
+      // Flag warp for next route and navigate
+      sessionStorage.setItem('warp','1');
+      navigate("/");
+      return;
 
     } catch (error: any) {
       console.error("Login error:", error);
@@ -111,9 +109,6 @@ const Auth = () => {
 
   return (
     <>
-      <AnimatePresence>
-        {showWarp && <WarpTransition />}
-      </AnimatePresence>
       
       <div className="min-h-screen flex items-center justify-center p-4">
       <motion.div

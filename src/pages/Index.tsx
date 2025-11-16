@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import QuantumParticle from "@/components/QuantumParticle";
 import EntanglementLink from "@/components/EntanglementLink";
+import WarpTransition from "@/components/WarpTransition";
 import BellsTheoremDemo from "@/components/BellsTheoremDemo";
 import SuperpositionDemo from "@/components/SuperpositionDemo";
 import { Button } from "@/components/ui/button";
@@ -16,34 +17,45 @@ const Index = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [showIntro, setShowIntro] = useState(false);
+  const [showWarp, setShowWarp] = useState(false);
   const [aliceState, setAliceState] = useState<QuantumState>("neutral");
   const [bobState, setBobState] = useState<QuantumState>("neutral");
   const [separated, setSeparated] = useState(false);
   const [isEntangled, setIsEntangled] = useState(false);
 
-  useEffect(() => {
-    // Check authentication
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        navigate("/auth");
+useEffect(() => {
+  // Check authentication
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!session) {
+      navigate("/auth");
+    } else {
+      setLoading(false);
+      const warp = sessionStorage.getItem('warp');
+      if (warp) {
+        setShowWarp(true);
+        sessionStorage.removeItem('warp');
+        setTimeout(() => {
+          setShowWarp(false);
+          setShowIntro(true);
+          setTimeout(() => setShowIntro(false), 4500);
+        }, 1200);
       } else {
-        setLoading(false);
         setShowIntro(true);
-        // Hide intro after animations
         setTimeout(() => setShowIntro(false), 4500);
       }
-    });
+    }
+  });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
-        navigate("/auth");
-      } else {
-        setLoading(false);
-      }
-    });
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (!session) {
+      navigate("/auth");
+    } else {
+      setLoading(false);
+    }
+  });
 
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+  return () => subscription.unsubscribe();
+}, [navigate]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -110,6 +122,9 @@ const Index = () => {
 
   return (
     <>
+      <AnimatePresence>
+        {showWarp && <WarpTransition />}
+      </AnimatePresence>
 
       {/* Intro Animation */}
       <AnimatePresence>
