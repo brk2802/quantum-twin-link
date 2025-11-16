@@ -5,77 +5,128 @@ const WarpTransition = () => {
     <motion.div
       initial={{ opacity: 1 }}
       animate={{ opacity: 0 }}
-      transition={{ duration: 1.5, delay: 0.2 }}
-      className="fixed inset-0 z-[100] pointer-events-none bg-background"
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, delay: 1.2 }}
+      className="fixed inset-0 z-[100] pointer-events-none bg-background overflow-hidden"
     >
-      {/* Warp lines radiating from center */}
-      {[...Array(60)].map((_, i) => (
-        <motion.div
-          key={i}
-          initial={{
-            x: "50%",
-            y: "50%",
-            scaleX: 0,
-            opacity: 1,
-          }}
-          animate={{
-            x: `${50 + Math.cos((i / 60) * Math.PI * 2) * 300}%`,
-            y: `${50 + Math.sin((i / 60) * Math.PI * 2) * 300}%`,
-            scaleX: [0, 5, 0],
-            opacity: [1, 1, 0],
-          }}
-          transition={{
-            duration: 1.2,
-            ease: "easeOut",
-            delay: i * 0.005,
-          }}
-          className="absolute w-2 h-1 bg-gradient-to-r from-transparent via-primary to-transparent shadow-[0_0_10px_rgba(168,85,247,0.8)]"
-          style={{
-            transform: `rotate(${(i / 60) * 360}deg)`,
-          }}
-        />
-      ))}
+      {/* Hyperspace light speed lines - horizontal stretching */}
+      {[...Array(100)].map((_, i) => {
+        const yPos = (i / 100) * 100;
+        const delay = i * 0.003;
+        return (
+          <motion.div
+            key={`line-${i}`}
+            initial={{
+              x: "50%",
+              y: `${yPos}%`,
+              scaleX: 0,
+              opacity: 0,
+            }}
+            animate={{
+              x: ["50%", "150%"],
+              scaleX: [0, 50, 100],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 0.8,
+              ease: [0.22, 1, 0.36, 1],
+              delay: delay,
+            }}
+            className="absolute h-[2px] w-8 origin-left"
+            style={{
+              background: `linear-gradient(90deg, transparent, ${
+                i % 3 === 0 ? 'hsl(var(--primary))' : 
+                i % 3 === 1 ? 'hsl(var(--accent))' : 
+                'hsl(var(--secondary))'
+              }, transparent)`,
+              boxShadow: `0 0 10px ${
+                i % 3 === 0 ? 'hsl(var(--primary) / 0.8)' : 
+                i % 3 === 1 ? 'hsl(var(--accent) / 0.8)' : 
+                'hsl(var(--secondary) / 0.8)'
+              }`,
+            }}
+          />
+        );
+      })}
 
-      {/* Center bright flash */}
+      {/* Stars zooming past */}
+      {[...Array(80)].map((_, i) => {
+        const angle = (i / 80) * Math.PI * 2;
+        const distance = 20 + Math.random() * 30;
+        return (
+          <motion.div
+            key={`star-${i}`}
+            initial={{
+              x: "50%",
+              y: "50%",
+              scale: 0,
+              opacity: 0,
+            }}
+            animate={{
+              x: `${50 + Math.cos(angle) * distance * 10}%`,
+              y: `${50 + Math.sin(angle) * distance * 10}%`,
+              scale: [0, 1, 0],
+              opacity: [0, 1, 0],
+            }}
+            transition={{
+              duration: 0.9,
+              ease: "easeOut",
+              delay: i * 0.005,
+            }}
+            className="absolute w-1 h-1 rounded-full bg-foreground"
+            style={{
+              boxShadow: '0 0 4px hsl(var(--foreground))',
+            }}
+          />
+        );
+      })}
+
+      {/* Center acceleration flash */}
       <motion.div
         initial={{ scale: 0, opacity: 1 }}
-        animate={{ scale: [0, 2, 4], opacity: [1, 0.8, 0] }}
-        transition={{ duration: 1.2, ease: "easeOut" }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-primary/40 blur-3xl"
-      />
-      
-      {/* Secondary glow ring */}
-      <motion.div
-        initial={{ scale: 0, opacity: 0.8 }}
-        animate={{ scale: [0, 3, 5], opacity: [0.8, 0.4, 0] }}
-        transition={{ duration: 1.4, ease: "easeOut", delay: 0.1 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full border-4 border-secondary blur-sm"
+        animate={{ 
+          scale: [0, 1.5, 8],
+          opacity: [1, 1, 0],
+        }}
+        transition={{ 
+          duration: 1,
+          ease: "easeOut",
+        }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl"
+        style={{
+          background: 'radial-gradient(circle, hsl(var(--primary) / 0.8), hsl(var(--primary) / 0.3), transparent)',
+        }}
       />
 
-      {/* Particle swirl effect */}
-      {[...Array(30)].map((_, i) => (
-        <motion.div
-          key={`particle-${i}`}
-          initial={{
-            x: "50%",
-            y: "50%",
-            scale: 0,
-            opacity: 0,
-          }}
-          animate={{
-            x: `${50 + Math.cos((i / 30) * Math.PI * 2 + Math.PI) * 150}%`,
-            y: `${50 + Math.sin((i / 30) * Math.PI * 2 + Math.PI) * 150}%`,
-            scale: [0, 1, 0],
-            opacity: [0, 1, 0],
-          }}
-          transition={{
-            duration: 1,
-            ease: "easeOut",
-            delay: i * 0.02,
-          }}
-          className="absolute w-2 h-2 rounded-full bg-accent shadow-[0_0_8px_rgba(244,114,182,0.8)]"
-        />
-      ))}
+      {/* Horizontal motion blur effect */}
+      <motion.div
+        initial={{ scaleX: 0, opacity: 0 }}
+        animate={{ 
+          scaleX: [0, 2, 4],
+          opacity: [0, 0.5, 0],
+        }}
+        transition={{ 
+          duration: 0.8,
+          ease: "easeOut",
+          delay: 0.2,
+        }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-32 origin-center"
+        style={{
+          background: 'linear-gradient(90deg, transparent, hsl(var(--primary) / 0.3), transparent)',
+          filter: 'blur(20px)',
+        }}
+      />
+
+      {/* Tunnel vignette effect */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 0] }}
+        transition={{ duration: 1 }}
+        className="absolute inset-0"
+        style={{
+          background: 'radial-gradient(circle at center, transparent 20%, hsl(var(--background)) 80%)',
+        }}
+      />
     </motion.div>
   );
 };
