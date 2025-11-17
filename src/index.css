@@ -9,8 +9,8 @@ All colors MUST be HSL.
 @layer base {
   :root {
     /* Modern light gradient theme */
-    --background: 240 20% 98%;
-    --foreground: 240 10% 10%;
+    --background: 210 40% 96%;
+    --foreground: 220 15% 15%;
 
     --card: 0 0% 100%;
     --card-foreground: 240 10% 10%;
@@ -61,7 +61,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    background: radial-gradient(ellipse at top, hsl(262 83% 95%) 0%, hsl(240 20% 98%) 50%, hsl(0 0% 100%) 100%);
+    background: radial-gradient(ellipse at top, hsl(210 70% 92%) 0%, hsl(210 40% 96%) 50%, hsl(200 30% 98%) 100%);
     background-attachment: fixed;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
