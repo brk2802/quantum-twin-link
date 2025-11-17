@@ -8,15 +8,15 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    /* Modern gradient theme */
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    /* Modern light gradient theme */
+    --background: 240 20% 98%;
+    --foreground: 240 10% 10%;
 
-    --card: 240 10% 8%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
 
-    --popover: 240 10% 8%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
 
     /* Vibrant purple-blue gradient primary */
     --primary: 262 83% 58%;
@@ -27,8 +27,8 @@ All colors MUST be HSL.
     --secondary-foreground: 0 0% 100%;
 
     /* Muted tones */
-    --muted: 240 5% 26%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 240 10% 90%;
+    --muted-foreground: 240 5% 40%;
 
     /* Pink accent */
     --accent: 330 81% 60%;
@@ -37,13 +37,13 @@ All colors MUST be HSL.
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 18%;
-    --input: 240 6% 18%;
+    --border: 240 10% 85%;
+    --input: 240 10% 85%;
     --ring: 262 83% 58%;
 
     --radius: 0.75rem;
 
-    /* Quantum glow effects - updated for modern theme */
+    /* Quantum glow effects - updated for light theme */
     --quantum-glow: 262 83% 58%;
     --quantum-glow-secondary: 173 80% 40%;
     
@@ -61,7 +61,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    background: radial-gradient(ellipse at top, hsl(262 83% 10%) 0%, hsl(240 10% 3.9%) 50%, hsl(240 10% 1%) 100%);
+    background: radial-gradient(ellipse at top, hsl(262 83% 95%) 0%, hsl(240 20% 98%) 50%, hsl(0 0% 100%) 100%);
     background-attachment: fixed;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
