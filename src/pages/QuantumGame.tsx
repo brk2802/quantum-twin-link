@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -11,7 +11,6 @@ import {
   Brain, 
   Zap, 
   CheckCircle2, 
-  XCircle, 
   ArrowRight,
   BookOpen,
   Target
@@ -27,53 +26,163 @@ type GameLevel = "tutorial" | "basic" | "intermediate" | "advanced";
 interface Challenge {
   id: number;
   question: string;
+  options: string[];
   explanation: string;
-  correctAnswer: "same" | "opposite" | "random";
+  correctAnswer: number;
+  type: "spin" | "concept";
 }
 
 const challenges: Record<GameLevel, Challenge[]> = {
   tutorial: [
     {
       id: 1,
-      question: "When you measure Alice's particle as SPIN UP, what will Bob's particle be?",
-      explanation: "In quantum entanglement, particles are correlated. When one is measured as SPIN UP, the entangled partner will always be SPIN DOWN!",
-      correctAnswer: "opposite"
+      question: "When you measure Alice's particle as SPIN UP ⬆️, what will Bob's particle be?",
+      options: ["SPIN UP ⬆️", "SPIN DOWN ⬇️", "Random/Uncertain"],
+      explanation: "Perfect! In quantum entanglement, particles are perfectly anti-correlated. When Alice is SPIN UP, Bob is always SPIN DOWN!",
+      correctAnswer: 1,
+      type: "spin"
+    },
+    {
+      id: 2,
+      question: "Alice measures SPIN DOWN ⬇️. What's Bob's state?",
+      options: ["SPIN UP ⬆️", "SPIN DOWN ⬇️", "Could be either"],
+      explanation: "Excellent! Bob's particle will be SPIN UP when Alice is SPIN DOWN. They're perfectly correlated!",
+      correctAnswer: 0,
+      type: "spin"
+    },
+    {
+      id: 3,
+      question: "Before measurement, what are the particles' states?",
+      options: ["Both UP", "Both DOWN", "Superposition (both at once)", "Already decided but hidden"],
+      explanation: "Great! Before measurement, entangled particles exist in superposition - they don't have definite states until measured!",
+      correctAnswer: 2,
+      type: "concept"
     }
   ],
   basic: [
     {
-      id: 2,
-      question: "If Bob's particle shows SPIN DOWN, what happened to Alice's particle?",
-      explanation: "Perfect! Entangled particles show instant correlation. Bob's SPIN DOWN means Alice must be SPIN UP.",
-      correctAnswer: "opposite"
+      id: 4,
+      question: "Bob measures SPIN UP ⬆️. What happened to Alice's particle?",
+      options: ["SPIN UP ⬆️", "SPIN DOWN ⬇️", "Still uncertain"],
+      explanation: "Correct! When Bob measures SPIN UP, Alice's particle instantly becomes SPIN DOWN. This is quantum entanglement!",
+      correctAnswer: 1,
+      type: "spin"
     },
     {
-      id: 3,
-      question: "Can the particles communicate faster than light?",
-      explanation: "No! While the correlation is instant, no information travels between them. The measurement reveals pre-existing correlations.",
-      correctAnswer: "opposite"
+      id: 5,
+      question: "Can particles send messages faster than light using entanglement?",
+      options: ["Yes, instantly!", "No, only correlations exist", "Only over short distances"],
+      explanation: "Right! While correlations appear instant, they can't transmit information. Each measurement result appears random!",
+      correctAnswer: 1,
+      type: "concept"
+    },
+    {
+      id: 6,
+      question: "Alice is SPIN DOWN ⬇️. Bob will be...",
+      options: ["SPIN UP ⬆️", "SPIN DOWN ⬇️", "Superposition"],
+      explanation: "Perfect! The anti-correlation means opposite spins. Alice DOWN = Bob UP!",
+      correctAnswer: 0,
+      type: "spin"
+    },
+    {
+      id: 7,
+      question: "What happens when Alice measures her particle?",
+      options: ["Only Alice's state changes", "Bob's state also becomes definite", "Nothing happens to Bob"],
+      explanation: "Exactly! The measurement 'collapses' both particles simultaneously, no matter the distance!",
+      correctAnswer: 1,
+      type: "concept"
     }
   ],
   intermediate: [
     {
-      id: 4,
-      question: "If particles are separated by 1000 km, will they still be correlated?",
-      explanation: "Yes! Distance doesn't matter for quantum entanglement. The correlation persists regardless of separation.",
-      correctAnswer: "opposite"
+      id: 8,
+      question: "Particles are 1000 km apart. Alice measures SPIN UP ⬆️. Bob's state?",
+      options: ["SPIN UP ⬆️", "SPIN DOWN ⬇️", "Uncorrelated now"],
+      explanation: "Brilliant! Distance doesn't matter in quantum entanglement. The correlation is maintained regardless of separation!",
+      correctAnswer: 1,
+      type: "spin"
     },
     {
-      id: 5,
-      question: "What happens to entanglement after the first measurement?",
-      explanation: "After measurement, the entanglement collapses! The correlation only exists until one particle is measured.",
-      correctAnswer: "opposite"
+      id: 9,
+      question: "Einstein called entanglement 'spooky action at a distance.' Why was he skeptical?",
+      options: ["It seemed to violate locality", "It was too fast", "It required magic", "It broke thermodynamics"],
+      explanation: "Correct! Einstein believed nothing could influence distant objects instantly. But quantum mechanics proved him wrong!",
+      correctAnswer: 0,
+      type: "concept"
+    },
+    {
+      id: 10,
+      question: "After measuring once, Alice measures again. What happens?",
+      options: ["Same result as before", "Opposite result", "New random result"],
+      explanation: "Right! After the first measurement, the particle has a definite state. Measuring again gives the same result!",
+      correctAnswer: 0,
+      type: "concept"
+    },
+    {
+      id: 11,
+      question: "Bob measures SPIN DOWN ⬇️. Alice will measure...",
+      options: ["SPIN UP ⬆️", "SPIN DOWN ⬇️", "Nothing yet"],
+      explanation: "Perfect understanding! The anti-correlation continues: Bob DOWN means Alice UP!",
+      correctAnswer: 0,
+      type: "spin"
+    },
+    {
+      id: 12,
+      question: "What breaks the entanglement?",
+      options: ["Distance", "Time", "Measurement", "Nothing can break it"],
+      explanation: "Excellent! Measurement 'collapses' the quantum state and breaks the entanglement. It's a one-time correlation!",
+      correctAnswer: 2,
+      type: "concept"
     }
   ],
   advanced: [
     {
-      id: 6,
-      question: "Can we use entanglement to send messages instantly?",
-      explanation: "No! Even though correlations are instant, we can't use them to send information faster than light. Each measurement result is random.",
-      correctAnswer: "opposite"
+      id: 13,
+      question: "Alice is SPIN UP ⬆️. What's Bob's spin?",
+      options: ["SPIN UP ⬆️", "SPIN DOWN ⬇️", "Depends on distance"],
+      explanation: "Masterful! You've mastered the fundamental principle: opposite spins, always!",
+      correctAnswer: 1,
+      type: "spin"
+    },
+    {
+      id: 14,
+      question: "Bell's theorem proved entanglement is...",
+      options: ["Classical correlation", "True quantum phenomenon", "An illusion", "Local hidden variables"],
+      explanation: "Outstanding! Bell's theorem proved quantum entanglement is real and not just hidden classical information!",
+      correctAnswer: 1,
+      type: "concept"
+    },
+    {
+      id: 15,
+      question: "Can we clone an entangled quantum state?",
+      options: ["Yes, easily", "No, quantum no-cloning theorem", "Only if measured first"],
+      explanation: "Perfect! The no-cloning theorem states you cannot create identical copies of unknown quantum states!",
+      correctAnswer: 1,
+      type: "concept"
+    },
+    {
+      id: 16,
+      question: "Bob measures SPIN UP ⬆️. Alice's measurement shows...",
+      options: ["SPIN UP ⬆️", "SPIN DOWN ⬇️", "Both states"],
+      explanation: "Quantum mastery! The perfect anti-correlation: Bob UP = Alice DOWN!",
+      correctAnswer: 1,
+      type: "spin"
+    },
+    {
+      id: 17,
+      question: "What's the practical use of quantum entanglement?",
+      options: ["Time travel", "Quantum computing & cryptography", "Teleportation of matter", "Unlimited energy"],
+      explanation: "Brilliant! Entanglement enables quantum computers, ultra-secure communication, and quantum teleportation of information!",
+      correctAnswer: 1,
+      type: "concept"
+    },
+    {
+      id: 18,
+      question: "In quantum teleportation, what actually moves?",
+      options: ["The particle itself", "Quantum information", "Energy", "Nothing moves"],
+      explanation: "Genius! Only the quantum information is transferred, not the physical particle. The original state is destroyed!",
+      correctAnswer: 1,
+      type: "concept"
     }
   ]
 };
@@ -113,6 +222,9 @@ const QuantumGame = () => {
     setTotalAttempts(0);
     setCurrentChallenge(0);
     setGameLevel("tutorial");
+    setStreak(0);
+    setBestStreak(0);
+    setMultiplier(1);
     initializeChallenge();
   };
 
@@ -131,34 +243,31 @@ const QuantumGame = () => {
     setAliceState(newState);
     setBobState(correlatedState);
     setIsEntangled(true);
+    setSeparated(true);
   };
 
-  const handleAnswer = (playerGuess: "same" | "opposite") => {
-    const challenge = challenges[gameLevel][currentChallenge];
-    const correct = playerGuess === challenge.correctAnswer;
-    
+  const handleAnswer = (answerIndex: number) => {
+    const currentChallenges = challenges[gameLevel];
+    const challenge = currentChallenges[currentChallenge];
     setTotalAttempts(prev => prev + 1);
     
-    if (correct) {
+    if (answerIndex === challenge.correctAnswer) {
       const newStreak = streak + 1;
-      setStreak(newStreak);
-      if (newStreak > bestStreak) setBestStreak(newStreak);
-      
-      // Calculate multiplier based on streak
       const newMultiplier = Math.min(Math.floor(newStreak / 3) + 1, 5);
-      setMultiplier(newMultiplier);
-      
       const points = 10 * newMultiplier;
-      setScore(prev => prev + points);
       
-      // Show combo animation for streaks
-      if (newStreak >= 3) {
+      setScore(prev => prev + points);
+      setStreak(newStreak);
+      setBestStreak(Math.max(bestStreak, newStreak));
+      setMultiplier(newMultiplier);
+      setShowExplanation(true);
+      
+      if (newMultiplier > 1) {
         setShowCombo(true);
-        setTimeout(() => setShowCombo(false), 2000);
+        setTimeout(() => setShowCombo(false), 1000);
       }
       
-      // Create particle explosion
-      const newParticles = Array.from({ length: 12 }, (_, i) => ({
+      const newParticles = Array.from({ length: 8 }, (_, i) => ({
         id: Date.now() + i,
         x: Math.random() * 100 - 50,
         y: Math.random() * 100 - 50
@@ -166,19 +275,17 @@ const QuantumGame = () => {
       setParticles(newParticles);
       setTimeout(() => setParticles([]), 1000);
       
-      toast.success(newStreak >= 3 ? `${newStreak}x COMBO! +${points} points 🔥` : `Correct! +${points} points`, {
-        icon: <CheckCircle2 className="w-4 h-4" />
+      toast.success(`Correct! +${points} points! 🎉`, {
+        description: `${newStreak} streak! ${newMultiplier}x multiplier`
       });
     } else {
       setStreak(0);
       setMultiplier(1);
-      toast.error("Streak broken! Study the explanation", {
-        icon: <XCircle className="w-4 h-4" />
+      setShowExplanation(true);
+      toast.error("Not quite! Study the explanation", {
+        description: "Streak reset"
       });
     }
-    
-    setShowExplanation(true);
-    measureAlice();
   };
 
   const nextChallenge = () => {
@@ -188,7 +295,6 @@ const QuantumGame = () => {
       setCurrentChallenge(prev => prev + 1);
       initializeChallenge();
     } else {
-      // Move to next level
       const levels: GameLevel[] = ["tutorial", "basic", "intermediate", "advanced"];
       const currentIndex = levels.indexOf(gameLevel);
       
@@ -196,13 +302,9 @@ const QuantumGame = () => {
         setGameLevel(levels[currentIndex + 1]);
         setCurrentChallenge(0);
         initializeChallenge();
-        toast.success(`Level Up! Entering ${levels[currentIndex + 1]} mode!`, {
-          icon: <Trophy className="w-4 h-4" />
-        });
+        toast.success(`Level Up! Entering ${levels[currentIndex + 1]} mode!`);
       } else {
-        toast.success(`Game Complete! Final Score: ${score}`, {
-          icon: <Trophy className="w-4 h-4" />
-        });
+        toast.success(`Game Complete! Final Score: ${score}`);
         setGameStarted(false);
       }
     }
@@ -231,8 +333,7 @@ const QuantumGame = () => {
                 Quantum Entanglement Game
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Learn about quantum entanglement through interactive challenges. 
-                Test your understanding and master the mysteries of quantum mechanics!
+                Master quantum mechanics through 18 challenging questions across 4 levels!
               </p>
             </div>
 
@@ -253,40 +354,64 @@ const QuantumGame = () => {
                 <div className="space-y-2">
                   <h4 className="font-semibold text-primary">⚡ Instant Connection</h4>
                   <p className="text-sm text-muted-foreground">
-                    Why measurements appear to affect each other instantly
+                    Why measurements affect each other instantly
                   </p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-semibold text-primary">🌌 Spooky Action</h4>
                   <p className="text-sm text-muted-foreground">
-                    Einstein's "spooky action at a distance" explained
+                    Einstein's "spooky action at a distance"
                   </p>
                 </div>
                 <div className="space-y-2">
                   <h4 className="font-semibold text-primary">🎯 Real Applications</h4>
                   <p className="text-sm text-muted-foreground">
-                    How entanglement is used in quantum computing
+                    Quantum computing & cryptography
                   </p>
                 </div>
               </CardContent>
             </Card>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                onClick={startGame}
-                className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
-              >
-                <Target className="w-5 h-5 mr-2" />
-                Start Learning
+            <Card className="border-accent/20 bg-accent/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="w-5 h-5" />
+                  Game Features
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-left space-y-3">
+                <div className="flex items-start gap-3">
+                  <Trophy className="w-5 h-5 text-primary mt-0.5" />
+                  <div>
+                    <p className="font-semibold">4 Progressive Levels</p>
+                    <p className="text-sm text-muted-foreground">Tutorial to Quantum Master</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Zap className="w-5 h-5 text-accent mt-0.5" />
+                  <div>
+                    <p className="font-semibold">Streak Multipliers</p>
+                    <p className="text-sm text-muted-foreground">Up to 5x points boost</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Brain className="w-5 h-5 text-secondary mt-0.5" />
+                  <div>
+                    <p className="font-semibold">18 Unique Challenges</p>
+                    <p className="text-sm text-muted-foreground">Spin predictions + concepts</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex gap-4 justify-center">
+              <Button variant="outline" size="lg" onClick={() => navigate("/")} className="gap-2">
+                <Home className="w-4 h-4" />
+                Back Home
               </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => navigate("/")}
-              >
-                <Home className="w-5 h-5 mr-2" />
-                Back to Simulation
+              <Button size="lg" onClick={startGame} className="gap-2 bg-gradient-to-r from-primary to-secondary">
+                <Brain className="w-4 h-4" />
+                Start Game
               </Button>
             </div>
           </motion.div>
@@ -296,98 +421,43 @@ const QuantumGame = () => {
   }
 
   const challenge = challenges[gameLevel][currentChallenge];
-  const levelProgress = ((currentChallenge + 1) / challenges[gameLevel].length) * 100;
+  const totalChallenges = challenges[gameLevel].length;
+  const levelProgress = ((currentChallenge + 1) / totalChallenges) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Quantum Entanglement Challenge
-            </h1>
-            <div className="flex gap-2">
-              <Badge variant="outline" className="text-primary border-primary">
-                Level: {gameLevel.toUpperCase()}
-              </Badge>
-              <Badge variant="outline" className="text-secondary border-secondary">
-                Challenge {currentChallenge + 1}/{challenges[gameLevel].length}
-              </Badge>
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
+              <Home className="w-5 h-5" />
+            </Button>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold">Quantum Challenge</h1>
+              <p className="text-sm text-muted-foreground">
+                Level: {gameLevel.charAt(0).toUpperCase() + gameLevel.slice(1)} - Challenge {currentChallenge + 1}/{totalChallenges}
+              </p>
             </div>
           </div>
           
-          <div className="flex gap-4 relative">
-            <Card className="border-primary/20 relative overflow-hidden">
-              <CardContent className="pt-4 text-center min-w-[100px]">
-                <Trophy className="w-6 h-6 mx-auto mb-1 text-primary" />
-                <motion.div 
-                  key={score}
-                  initial={{ scale: 1.5, color: "hsl(var(--primary))" }}
-                  animate={{ scale: 1 }}
-                  className="text-2xl font-bold text-primary"
-                >
-                  {score}
-                </motion.div>
-                <div className="text-xs text-muted-foreground">Score</div>
-              </CardContent>
-              
-              {/* Particle Explosion Effect */}
-              <AnimatePresence>
-                {particles.map(particle => (
-                  <motion.div
-                    key={particle.id}
-                    initial={{ x: 0, y: 0, scale: 1, opacity: 1 }}
-                    animate={{ 
-                      x: particle.x, 
-                      y: particle.y, 
-                      scale: 0,
-                      opacity: 0 
-                    }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                    className="absolute top-1/2 left-1/2 w-2 h-2 bg-primary rounded-full"
-                    style={{ 
-                      boxShadow: "0 0 10px hsl(var(--primary))",
-                    }}
-                  />
-                ))}
-              </AnimatePresence>
-            </Card>
-            
-            <Card className="border-accent/20">
-              <CardContent className="pt-4 text-center min-w-[100px]">
-                <Zap className="w-6 h-6 mx-auto mb-1 text-accent" />
-                <motion.div 
-                  key={streak}
-                  initial={{ scale: 1.3 }}
-                  animate={{ scale: 1 }}
-                  className="text-2xl font-bold text-accent"
-                >
-                  {streak}x
-                </motion.div>
-                <div className="text-xs text-muted-foreground">Streak</div>
-                {multiplier > 1 && (
-                  <Badge className="mt-1 bg-accent/20 text-accent border-0 text-[10px]">
-                    {multiplier}x Multi
-                  </Badge>
-                )}
-              </CardContent>
-            </Card>
-            
-            <Card className="border-secondary/20">
-              <CardContent className="pt-4 text-center min-w-[100px]">
-                <Target className="w-6 h-6 mx-auto mb-1 text-secondary" />
-                <div className="text-2xl font-bold text-secondary">
-                  {totalAttempts > 0 ? Math.round((score / (totalAttempts * 10)) * 100) : 0}%
-                </div>
-                <div className="text-xs text-muted-foreground">Accuracy</div>
-              </CardContent>
-            </Card>
+          <div className="flex gap-2 items-center flex-wrap">
+            <Badge variant="secondary" className="gap-1 px-3 py-1.5">
+              <Trophy className="w-4 h-4" />
+              Score: {score}
+            </Badge>
+            <Badge variant="outline" className="gap-1 px-3 py-1.5 border-accent text-accent">
+              <Zap className="w-4 h-4" />
+              Streak: {streak}
+            </Badge>
+            <Badge variant="outline" className="gap-1 px-3 py-1.5">
+              Best: {bestStreak}
+            </Badge>
+            <Badge variant="outline" className="gap-1 px-3 py-1.5 border-primary text-primary">
+              {multiplier}x
+            </Badge>
           </div>
         </div>
-        
-        {/* Combo Display */}
+
         <AnimatePresence>
           {showCombo && (
             <motion.div
@@ -396,173 +466,102 @@ const QuantumGame = () => {
               exit={{ scale: 0, rotate: 180, opacity: 0 }}
               className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 pointer-events-none"
             >
-              <div className="relative">
-                <div className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
-                  {streak}x COMBO!
-                </div>
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 1, repeat: Infinity }}
-                  className="absolute inset-0 border-4 border-primary rounded-full blur-md -z-10"
-                />
+              <div className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
+                {multiplier}x COMBO!
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Progress Bar */}
         <div className="space-y-3">
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="font-medium">Level Progress</span>
               <span className="text-primary font-bold">{Math.round(levelProgress)}%</span>
             </div>
-            <Progress value={levelProgress} className="h-3 bg-secondary/20" />
+            <Progress value={levelProgress} className="h-3" />
           </div>
           
-          {/* Streak Progress to Next Multiplier */}
           {streak > 0 && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              className="space-y-2"
-            >
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Next Multiplier Bonus</span>
-                <span className="text-accent font-semibold">
-                  {3 - (streak % 3)} more correct!
-                </span>
+                <span className="text-muted-foreground">Next Multiplier</span>
+                <span className="text-accent font-semibold">{3 - (streak % 3)} more!</span>
               </div>
-              <Progress value={(streak % 3) * 33.33} className="h-2 bg-accent/20" />
+              <Progress value={(streak % 3) * 33.33} className="h-2" />
             </motion.div>
           )}
         </div>
 
-        {/* Challenge Question */}
         <Card className="border-primary/20">
           <CardHeader>
-            <CardTitle className="text-xl">{challenge.question}</CardTitle>
-            <CardDescription>
-              Observe the particles and make your prediction
-            </CardDescription>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="w-5 h-5" />
+              {challenge.question}
+            </CardTitle>
           </CardHeader>
-        </Card>
+          <CardContent>
+            {challenge.type === "spin" ? (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <QuantumParticle name="Alice" state={aliceState} separated={separated} position="left" />
+                  {isEntangled && (
+                    <div className="flex items-center justify-center">
+                      <EntanglementLink separated={separated} />
+                    </div>
+                  )}
+                  <QuantumParticle name="Bob" state={bobState} separated={separated} position="right" />
+                </div>
 
-        {/* Quantum Particles Visualization */}
-        <Card className="border-primary/20">
-          <CardContent className="pt-6">
-            <div className="relative flex items-center justify-center gap-8 md:gap-16 min-h-[300px]">
-              <QuantumParticle
-                name="ALICE"
-                state={aliceState}
-                onClick={() => !isEntangled && measureAlice()}
-                separated={separated}
-                position="left"
-              />
-              
-              <EntanglementLink isActive={isEntangled} separated={separated} />
-              
-              <QuantumParticle
-                name="BOB"
-                state={bobState}
-                onClick={() => {}}
-                separated={separated}
-                position="right"
-              />
-            </div>
+                {aliceState !== "neutral" && !showExplanation && (
+                  <div className="space-y-3">
+                    <p className="text-sm text-muted-foreground mb-4">Choose Bob's particle state:</p>
+                    <div className="grid gap-3">
+                      {challenge.options.map((option, index) => (
+                        <Button key={index} variant="outline" size="lg" onClick={() => handleAnswer(index)} className="justify-start hover:scale-105 transition-transform">
+                          <CheckCircle2 className="mr-2 h-5 w-5" />
+                          {option}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-            {!isEntangled && (
-              <div className="text-center mt-6">
-                <Button
-                  onClick={measureAlice}
-                  className="bg-gradient-to-r from-primary to-secondary hover:opacity-90"
-                >
-                  Measure Alice's Particle
-                </Button>
+                {aliceState === "neutral" && (
+                  <Button onClick={() => measureAlice()} size="lg" className="w-full">
+                    <Zap className="mr-2 h-5 w-5" />
+                    Measure Alice's Particle
+                  </Button>
+                )}
+              </>
+            ) : (
+              <div className="space-y-4">
+                {!showExplanation && (
+                  <div className="grid gap-3">
+                    {challenge.options.map((option, index) => (
+                      <Button key={index} variant="outline" size="lg" onClick={() => handleAnswer(index)} className="justify-start hover:scale-105 transition-transform text-left h-auto py-4">
+                        <span className="mr-3 flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold">
+                          {String.fromCharCode(65 + index)}
+                        </span>
+                        <span className="flex-1">{option}</span>
+                      </Button>
+                    ))}
+                  </div>
+                )}
               </div>
+            )}
+
+            {showExplanation && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mt-6 p-4 bg-accent/10 border border-accent/20 rounded-lg space-y-4">
+                <p className="text-sm">{challenge.explanation}</p>
+                <Button onClick={nextChallenge} className="w-full gap-2">
+                  <ArrowRight className="w-4 h-4" />
+                  Next Challenge
+                </Button>
+              </motion.div>
             )}
           </CardContent>
         </Card>
-
-        {/* Answer Buttons */}
-        {isEntangled && !showExplanation && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid sm:grid-cols-2 gap-4"
-          >
-            <motion.div
-              whileHover={{ scale: 1.03, y: -4 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => handleAnswer("opposite")}
-                className="w-full h-auto py-6 flex-col gap-2 border-2 hover:border-primary hover:bg-primary/10 hover:shadow-[0_0_20px_hsl(var(--primary)/0.3)] transition-all duration-300"
-              >
-                <span className="text-lg font-bold">Opposite Spins ⚡</span>
-                <span className="text-sm text-muted-foreground">
-                  They will have opposite measurements
-                </span>
-              </Button>
-            </motion.div>
-            <motion.div
-              whileHover={{ scale: 1.03, y: -4 }}
-              whileTap={{ scale: 0.97 }}
-            >
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => handleAnswer("same")}
-                className="w-full h-auto py-6 flex-col gap-2 border-2 hover:border-secondary hover:bg-secondary/10 hover:shadow-[0_0_20px_hsl(var(--secondary)/0.3)] transition-all duration-300"
-              >
-                <span className="text-lg font-bold">Same Spins 🔄</span>
-                <span className="text-sm text-muted-foreground">
-                  They will have identical measurements
-                </span>
-              </Button>
-            </motion.div>
-          </motion.div>
-        )}
-
-        {/* Explanation */}
-        <AnimatePresence>
-          {showExplanation && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-            >
-              <Card className="border-accent/20 bg-accent/5">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Brain className="w-5 h-5 text-accent" />
-                    Explanation
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-muted-foreground">{challenge.explanation}</p>
-                  <Button
-                    onClick={nextChallenge}
-                    className="w-full bg-gradient-to-r from-primary to-secondary hover:opacity-90"
-                  >
-                    Next Challenge
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Home Button */}
-        <div className="text-center">
-          <Button variant="ghost" onClick={() => navigate("/")}>
-            <Home className="w-4 h-4 mr-2" />
-            Back to Simulation
-          </Button>
-        </div>
       </div>
     </div>
   );
