@@ -504,13 +504,13 @@ const QuantumGame = () => {
             {challenge.type === "spin" ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <QuantumParticle name="Alice" state={aliceState} separated={separated} position="left" />
+                  <QuantumParticle name="Alice" state={aliceState} onClick={() => {}} separated={separated} position="left" />
                   {isEntangled && (
                     <div className="flex items-center justify-center">
-                      <EntanglementLink separated={separated} />
+                      <EntanglementLink isActive={isEntangled} separated={separated} />
                     </div>
                   )}
-                  <QuantumParticle name="Bob" state={bobState} separated={separated} position="right" />
+                  <QuantumParticle name="Bob" state={bobState} onClick={() => {}} separated={separated} position="right" />
                 </div>
 
                 {aliceState !== "neutral" && !showExplanation && (
