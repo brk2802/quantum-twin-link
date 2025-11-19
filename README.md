@@ -1,73 +1,103 @@
-# Welcome to your Lovable project
+# Quantum Entanglement Simulation
 
-## Project info
+This project is an interactive simulation that visually explains the concept of **Quantum Entanglement**. It is designed for presentations, learning, and demonstrations of how entangled qubits behave when measured.
 
-**URL**: https://lovable.dev/projects/7395782c-b083-4ada-8928-fa26e64f7e8e
+---
 
-## How can I edit this code?
+## 🚀 Project Overview
 
-There are several ways of editing your application.
+Quantum entanglement is a fundamental phenomenon where two qubits become linked in such a way that the state of one instantly determines the state of the other — no matter how far apart they are.
 
-**Use Lovable**
+This simulation helps you:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7395782c-b083-4ada-8928-fa26e64f7e8e) and start prompting.
+* Understand entangled qubit pairs.
+* Visualize correlation between measurement outcomes.
+* Explore how quantum states collapse upon measurement.
+* Demonstrate concepts in an intuitive, graphical way.
 
-Changes made via Lovable will be committed automatically to this repo.
+---
 
-**Use your preferred IDE**
+## 🧩 Features
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+* Interactive UI to visualize entangled states.
+* Step‑by‑step measurement demonstration.
+* Explains state collapse in real time.
+* Modern, AI‑assisted interface built using Lovable.dev.
+* Customizable settings depending on the scenario.
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
+## 🧠 Concepts Demonstrated
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### **1. Bell States**
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Displays the most commonly used maximally entangled quantum states.
 
-# Step 3: Install the necessary dependencies.
-npm i
+### **2. Measurement Correlation**
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+Shows how measuring one qubit collapses the state of the second.
 
-**Edit a file directly in GitHub**
+### **3. Superposition & Collapse**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Explains how each qubit exists in superposition until observed.
 
-**Use GitHub Codespaces**
+### **4. No‑Communication Theorem**
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Reinforces that while correlation exists, information does not travel faster than light.
 
-## What technologies are used for this project?
+---
 
-This project is built with:
+## 📦 Tech Stack
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+* **Frontend:** HTML, CSS, JS (or whatever the simulation uses)
+* **Backend:** —
+* **Framework / Platform:** github
 
-## How can I deploy this project?
+---
 
-Simply open [Lovable](https://lovable.dev/projects/7395782c-b083-4ada-8928-fa26e64f7e8e) and click on Share -> Publish.
+## 🛠 Setup & Installation
 
-## Can I connect a custom domain to my Lovable project?
+1. Clone the repository:
 
-Yes, you can!
+   ```bash
+   git clone https://github.com/your-username/quantum-entanglement-simulation.git
+   ```
+2. Navigate into the folder:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+   ```bash
+   cd quantum-entanglement-simulation
+   ```
+3. Open `index.html` in your browser (or run with a local server).
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
+
+## 🎮 Usage
+
+1. Open the simulation.
+2. Choose the entangled state or start the default Bell state.
+3. Click **Measure Qubit A** or **Measure Qubit B**.
+4. Observe how the partner qubit collapses instantly.
+
+---
+
+## 📚 Educational Value
+
+This simulation is ideal for:
+
+* Physics class projects
+* Quantum computing presentations
+* Workshops and demonstrations
+* Beginner‑friendly learning about qubits
+
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to submit issues or pull requests.
+
+---
+
+## ⭐ Support the Project
+
+If you like this simulation, consider giving the repository a ⭐ on GitHub!
